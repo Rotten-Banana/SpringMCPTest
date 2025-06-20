@@ -1,10 +1,13 @@
 package com.suriyaprakhash.inventory_mgnt.inventory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -15,6 +18,9 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Autowired
     private InventoryRepository inventoryRepository;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     /**
      * Maps an InventoryEntity to an InventoryData object.
@@ -50,7 +56,7 @@ public class InventoryServiceImpl implements InventoryService {
     public InventoryData addToInventory(InventoryData inventoryData) {
         // Check if product already exists in inventory
         InventoryEntity existingEntity = inventoryRepository.findByProductId(inventoryData.productId());
-        
+
         if (existingEntity != null) {
             // Update existing inventory item
             existingEntity.setAvailability(existingEntity.getAvailability() + inventoryData.availability());
@@ -95,31 +101,98 @@ public class InventoryServiceImpl implements InventoryService {
         }
 
         Optional<InventoryEntity> entityOptional = inventoryRepository.findById(id);
-        
+
         if (entityOptional.isPresent()) {
             InventoryEntity entity = entityOptional.get();
-            
+
+            // Check if inventory will fall below 0 after consumption
             if (entity.getAvailability() < quantity) {
-                return Optional.empty(); // Not enough items in inventory
+                // Allow consumption but publish an event to trigger order placement
+                int currentAvailability = entity.getAvailability();
+                entity.setAvailability(currentAvailability - quantity);
+                InventoryEntity updatedEntity = inventoryRepository.save(entity);
+
+                // Publish event for low inventory
+                LowInventoryEvent event = new LowInventoryEvent(
+                    entity.getProductId(),
+                    entity.getId(),
+                    updatedEntity.getAvailability(),
+                    quantity
+                );
+                eventPublisher.publishEvent(event);
+
+                return Optional.of(mapEntityToData(updatedEntity));
+            } else {
+                // Normal consumption
+                entity.setAvailability(entity.getAvailability() - quantity);
+                InventoryEntity updatedEntity = inventoryRepository.save(entity);
+                return Optional.of(mapEntityToData(updatedEntity));
             }
-            
-            entity.setAvailability(entity.getAvailability() - quantity);
-            InventoryEntity updatedEntity = inventoryRepository.save(entity);
-            return Optional.of(mapEntityToData(updatedEntity));
         }
-        
+
         return Optional.empty(); // Inventory item not found
     }
 
     @Override
     public boolean removeFromInventory(int id) {
         Optional<InventoryEntity> entityOptional = inventoryRepository.findById(id);
-        
+
         if (entityOptional.isPresent()) {
             inventoryRepository.deleteById(id);
             return true;
         }
-        
+
         return false; // Inventory item not found
+    }
+
+    @Override
+    public List<InventoryData> consumeMultipleFromInventory(Map<Integer, Integer> productQuantityMap) {
+        List<InventoryData> updatedInventoryItems = new ArrayList<>();
+
+        List<LowInventoryEvent> lowInventoryEvents = new ArrayList<>();
+
+        for (Map.Entry<Integer, Integer> entry : productQuantityMap.entrySet()) {
+            int productId = entry.getKey();
+            int quantity = entry.getValue();
+
+            if (quantity <= 0) {
+                continue; // Skip invalid quantities
+            }
+
+            InventoryEntity entity = inventoryRepository.findByProductId(productId);
+
+            if (entity != null) {
+                // Check if inventory will fall below 0 after consumption
+                if (entity.getAvailability() < quantity) {
+                    // Allow consumption but publish an event to trigger order placement
+                    int currentAvailability = entity.getAvailability();
+                    entity.setAvailability(currentAvailability - quantity);
+                    InventoryEntity updatedEntity = inventoryRepository.save(entity);
+
+                    // Publish event for low inventory
+                    LowInventoryEvent event = new LowInventoryEvent(
+                        entity.getProductId(),
+                        entity.getId(),
+                        updatedEntity.getAvailability(),
+                        quantity
+                    );
+
+                    lowInventoryEvents.add(event);
+
+                    updatedInventoryItems.add(mapEntityToData(updatedEntity));
+                } else {
+                    // Normal consumption
+                    entity.setAvailability(entity.getAvailability() - quantity);
+                    InventoryEntity updatedEntity = inventoryRepository.save(entity);
+                    updatedInventoryItems.add(mapEntityToData(updatedEntity));
+                }
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(lowInventoryEvents)) {
+            eventPublisher.publishEvent(new MultipleLowInventoryEvent(lowInventoryEvents));
+        }
+
+        return updatedInventoryItems;
     }
 }
