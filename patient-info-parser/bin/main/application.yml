@@ -1,9 +1,0 @@
-# set of configuration for the application
-application:
- # input date format for the patients dob
- date-format: "MM/dd/yyyy"
- # the data for states can be added as required here
- states:
-  michigan : MI
-  ohio : OH
-  illinois : IL
