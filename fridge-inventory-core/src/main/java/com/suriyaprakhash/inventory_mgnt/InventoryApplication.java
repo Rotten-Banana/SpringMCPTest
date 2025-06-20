@@ -30,4 +30,5 @@ public class InventoryApplication {
 								.name("MIT License")
 								.url("https://opensource.org/licenses/MIT")));
 	}
+
 }

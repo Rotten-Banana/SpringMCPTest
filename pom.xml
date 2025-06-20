@@ -17,7 +17,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>inventory</module>
+    <module>fridge-inventory-core</module>
   </modules>
 
     <dependencies>

@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -111,6 +112,27 @@ public class InventoryController {
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
+    @Operation(summary = "Consume multiple items from inventory", description = "Reduces the availability of multiple items in inventory based on product IDs and quantities")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Items consumed successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = InventoryData.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request",
+                    content = @Content)
+    })
+    @PutMapping("/consume")
+    public ResponseEntity<List<InventoryData>> consumeMultipleFromInventory(
+            @Parameter(description = "Map of product IDs to quantities to consume", required = true)
+            @RequestBody Map<Integer, Integer> productQuantityMap) {
+        List<InventoryData> updatedInventory = inventoryService.consumeMultipleFromInventory(productQuantityMap);
+
+        if (updatedInventory.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(updatedInventory, HttpStatus.OK);
+    }
+
     @Operation(summary = "Remove item from inventory", description = "Removes an item from inventory")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Item removed successfully", 
@@ -128,4 +150,6 @@ public class InventoryController {
             ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
             : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+
 }

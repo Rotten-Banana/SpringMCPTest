@@ -10,7 +10,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-	<artifactId>inventory</artifactId>
+	<artifactId>fridge-inventory-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>inventory</name>
 	<description>A simple AI project to manage fridge inventory</description>
