@@ -7,7 +7,7 @@
 		<groupId>com.suriyaprakhash</groupId>
 		<artifactId>refrigerator-inventory-mgnt</artifactId>
 		<version>0.0.1</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
 
 	<artifactId>fridge-inventory-core</artifactId>
@@ -103,13 +103,5 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

@@ -18,6 +18,8 @@
 
   <modules>
     <module>fridge-inventory-core</module>
+	<module>mcp-server</module>
+	<module>mcp-client</module>
   </modules>
 
     <dependencies>
@@ -28,5 +30,14 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
