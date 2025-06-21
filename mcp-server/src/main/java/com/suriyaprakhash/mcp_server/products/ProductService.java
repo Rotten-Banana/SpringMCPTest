@@ -1,12 +1,15 @@
 package com.suriyaprakhash.mcp_server.products;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ProductService {
 
@@ -63,71 +66,50 @@ public class ProductService {
 //		}
 //	}
 
-//	/**
-//	 * Get forecast for a specific latitude/longitude
-//	 * @param latitude Latitude
-//	 * @param longitude Longitude
-//	 * @return The forecast for the given location
-//	 */
-//	@Tool(description = "Get weather forecast for a specific latitude/longitude")
-//	public String getWeatherForecastByLocation(double latitude, double longitude) {
-//
-//		var points = restClient.get()
-//			.uri("/points/{latitude},{longitude}", latitude, longitude)
-//			.retrieve()
-//			.body(Points.class);
-//
-//		var forecast = restClient.get().uri(points.properties().forecast()).retrieve().body(Forecast.class);
-//
-//		String forecastText = forecast.properties().periods().stream().map(p -> {
-//			return String.format("""
-//					%s:
-//					Temperature: %s %s
-//					Wind: %s %s
-//					Forecast: %s
-//					""", p.name(), p.temperature(), p.temperatureUnit(), p.windSpeed(), p.windDirection(),
-//					p.detailedForecast());
-//		}).collect(Collectors.joining());
-//
-//		return forecastText;
+
+//	@Tool(name = "get_tool_by_id",description = "Get the product by given, it returns the name, type and cost")
+//	public String getProductBy(String id) {
+//		ProductsData productsData = restClient.get().uri("/api/products/{id}", id).retrieve().body(ProductsData.class);
+//		return String.format("""
+//					Name: %s
+//					Type: %s
+//					Price: %s
+//					""", productsData.name(), productsData.type(), productsData.price());
 //	}
 
-
-//	@Tool(description = "Get weather alerts for a US state. Input is Two-letter US state code (e.g. CA, NY)")
-//	public String getAlerts(String state) {
-//		Alert alert = restClient.get().uri("/alerts/active/area/{state}", state).retrieve().body(Alert.class);
-//
-//		return alert.features()
-//			.stream()
-//			.map(f -> String.format("""
-//					Event: %s
-//					Area: %s
-//					Severity: %s
-//					Description: %s
-//					Instructions: %s
-//					""", f.properties().event(), f.properties.areaDesc(), f.properties.severity(),
-//					f.properties.description(), f.properties.instruction()))
-//			.collect(Collectors.joining("\n"));
-//	}
-
-	@Tool(name = "get_tool_by_id",description = "Get the tool by given")
-	public String getProductBy(String id) {
-		ProductsData productsData = restClient.get().uri("/api/products/{id}", id).retrieve().body(ProductsData.class);
-		return productsData.name();
+	@Tool(name = "get_all_products",description = "It returns the name, type and cost of all the available products")
+	public String getProducts() {
+		List<ProductsData> productsDataList = restClient.get().uri("/api/products").retrieve().body(new ParameterizedTypeReference<List<ProductsData>>() {});
+        assert productsDataList != null;
+        return productsDataList
+				.stream()
+				.map(productsData -> String.format("""
+					Name: %s
+					Type: %s
+					Price: %s
+					""", productsData.name(), productsData.type(), productsData.price()))
+				.collect(Collectors.joining("\n"));
 	}
 
-	@Tool(name = "get_all_products",description = "Get all the available products")
-	public String getProducts() {
-		List<ProductsData> productsData = restClient.get().uri("/api/products").retrieve().body(new ParameterizedTypeReference<List<ProductsData>>() {});
-        assert productsData != null;
-        return productsData.toString();
+
+	@Tool(name = "add_product",description = "It adds a new product")
+	public String addProduct(ProductsData productsData) {
+//		if (productsData == null || productsData.name() == null || productsData.name().isBlank()) {
+//			return "Product name is required to add a product.";
+//		}
+//		if (productsData.price() <= 0) {
+//			return "A valid price is required to add a product.";
+//		}
+		log.info("Adding new product");
+		ProductsData productsDataFinal = restClient.post().uri("/api/products").body(productsData).retrieve().body(ProductsData.class);
+		assert productsDataFinal != null;
+		return productsDataFinal.toString();
 	}
 
 
 	public static void main(String[] args) {
 		ProductService client = new ProductService();
-//		System.out.println(client.getWeatherForecastByLocation(47.6062, -122.3321));
-		System.out.println(client.getProductBy("1"));
+//		System.out.println(client.getProductBy("1"));
 		System.out.println(client.getProducts());
 	}
 

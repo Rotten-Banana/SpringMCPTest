@@ -39,6 +39,8 @@
 			<groupId>org.springframework.ai</groupId>
 			<artifactId>spring-ai-starter-mcp-client-webflux</artifactId>
 		</dependency>
+
+
 <!--		<dependency>-->
 <!--			<groupId>org.springframework.ai</groupId>-->
 <!--			<artifactId>spring-ai-starter-model-openai</artifactId>-->
@@ -47,6 +49,12 @@
 		<dependency>
 			<groupId>org.springframework.ai</groupId>
 			<artifactId>spring-ai-starter-model-ollama</artifactId>
+		</dependency>
+
+		<!-- for the chat memory-->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-starter-model-chat-memory-repository-jdbc</artifactId>
 		</dependency>
 
 		<!-- SpringDoc OpenAPI for Swagger documentation -->

@@ -3,10 +3,7 @@ package com.suriyaprakhash.mcp_client.chat;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
@@ -26,11 +23,11 @@ public class McpChatController {
         this.syncMcpToolCallbackProvider = syncMcpToolCallbackProvider;
     }
 
-    @GetMapping("{prompt}")
-    public Mono<String> chat(@PathVariable String prompt) {
-        return Mono.just(Objects.requireNonNull(chatClient.prompt()
-                .user(prompt)
+    @PostMapping
+    public String chat(@RequestBody String message) {
+        return chatClient.prompt()
+                .user(message)
                 .toolCallbacks(syncMcpToolCallbackProvider)
-                .call().content()));
+                .call().content();
     }
 }
