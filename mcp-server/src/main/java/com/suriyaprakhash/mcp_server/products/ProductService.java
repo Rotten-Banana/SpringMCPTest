@@ -94,13 +94,17 @@ public class ProductService {
 
 	@Tool(name = "add_product",description = "It adds a new product")
 	public String addProduct(ProductsData productsData) {
-//		if (productsData == null || productsData.name() == null || productsData.name().isBlank()) {
-//			return "Product name is required to add a product.";
-//		}
-//		if (productsData.price() <= 0) {
-//			return "A valid price is required to add a product.";
-//		}
-		log.info("Adding new product");
+		log.info("Attempting to add product. Raw input productsData: {}", productsData); // Add this line
+		if (productsData == null) {
+			return "Error: productsData is null.";
+		}
+		if (productsData.name() == null || productsData.name().isBlank()) {
+			return "Product name is required to add a product.";
+		}
+		if (productsData.price() <= 0) {
+			return "A valid price is required to add a product.";
+		}
+		log.info("Adding new product: {}", productsData);
 		ProductsData productsDataFinal = restClient.post().uri("/api/products").body(productsData).retrieve().body(ProductsData.class);
 		assert productsDataFinal != null;
 		return productsDataFinal.toString();
