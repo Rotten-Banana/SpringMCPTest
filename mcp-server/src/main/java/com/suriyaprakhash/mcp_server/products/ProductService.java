@@ -26,57 +26,6 @@ public class ProductService {
 			.build();
 	}
 
-//	@JsonIgnoreProperties(ignoreUnknown = true)
-//	public record Points(@JsonProperty("properties") Props properties) {
-//		@JsonIgnoreProperties(ignoreUnknown = true)
-//		public record Props(@JsonProperty("forecast") String forecast) {
-//		}
-//	}
-//
-//	@JsonIgnoreProperties(ignoreUnknown = true)
-//	public record Forecast(@JsonProperty("properties") Props properties) {
-//		@JsonIgnoreProperties(ignoreUnknown = true)
-//		public record Props(@JsonProperty("periods") List<Period> periods) {
-//		}
-//
-//		@JsonIgnoreProperties(ignoreUnknown = true)
-//		public record Period(@JsonProperty("number") Integer number, @JsonProperty("name") String name,
-//				@JsonProperty("startTime") String startTime, @JsonProperty("endTime") String endTime,
-//				@JsonProperty("isDaytime") Boolean isDayTime, @JsonProperty("temperature") Integer temperature,
-//				@JsonProperty("temperatureUnit") String temperatureUnit,
-//				@JsonProperty("temperatureTrend") String temperatureTrend,
-//				@JsonProperty("probabilityOfPrecipitation") Map probabilityOfPrecipitation,
-//				@JsonProperty("windSpeed") String windSpeed, @JsonProperty("windDirection") String windDirection,
-//				@JsonProperty("icon") String icon, @JsonProperty("shortForecast") String shortForecast,
-//				@JsonProperty("detailedForecast") String detailedForecast) {
-//		}
-//	}
-//
-//	@JsonIgnoreProperties(ignoreUnknown = true)
-//	public record Alert(@JsonProperty("features") List<Feature> features) {
-//
-//		@JsonIgnoreProperties(ignoreUnknown = true)
-//		public record Feature(@JsonProperty("properties") Properties properties) {
-//		}
-//
-//		@JsonIgnoreProperties(ignoreUnknown = true)
-//		public record Properties(@JsonProperty("event") String event, @JsonProperty("areaDesc") String areaDesc,
-//				@JsonProperty("severity") String severity, @JsonProperty("description") String description,
-//				@JsonProperty("instruction") String instruction) {
-//		}
-//	}
-
-
-//	@Tool(name = "get_tool_by_id",description = "Get the product by given, it returns the name, type and cost")
-//	public String getProductBy(String id) {
-//		ProductsData productsData = restClient.get().uri("/api/products/{id}", id).retrieve().body(ProductsData.class);
-//		return String.format("""
-//					Name: %s
-//					Type: %s
-//					Price: %s
-//					""", productsData.name(), productsData.type(), productsData.price());
-//	}
-
 	@Tool(name = "get_all_products",description = "It returns the name, type and cost of all the available products")
 	public String getProducts() {
 		List<ProductsData> productsDataList = restClient.get().uri("/api/products").retrieve().body(new ParameterizedTypeReference<List<ProductsData>>() {});
@@ -92,13 +41,13 @@ public class ProductService {
 	}
 
 
-	@Tool(name = "add_product",description = "It adds a new product")
-	public String addProduct(ProductsData productsData) {
+	@Tool(name = "add_product",
+			description = "Adds a new product to the product table. Requires the product's name and a valid price. Optionally, you can include the product's ID and type.")
+//	public String addProduct(ProductsData productsData) { // this is not working (converting json to object) - instead use them as individual vars
+	public String addProduct(String name, ProductType type, float price) {
+		ProductsData productsData = new ProductsData(0, name, type, price);
 		log.info("Attempting to add product. Raw input productsData: {}", productsData); // Add this line
-		if (productsData == null) {
-			return "Error: productsData is null.";
-		}
-		if (productsData.name() == null || productsData.name().isBlank()) {
+        if (productsData.name() == null || productsData.name().isBlank()) {
 			return "Product name is required to add a product.";
 		}
 		if (productsData.price() <= 0) {
@@ -111,9 +60,9 @@ public class ProductService {
 	}
 
 
+	// this is to test the functionality
 	public static void main(String[] args) {
 		ProductService client = new ProductService();
-//		System.out.println(client.getProductBy("1"));
 		System.out.println(client.getProducts());
 	}
 

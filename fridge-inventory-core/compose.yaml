@@ -6,4 +6,4 @@ services:
       - 'POSTGRES_PASSWORD=suriya'
       - 'POSTGRES_USER=suriya'
     ports:
-      - '5432'
+      - '5342:5432'

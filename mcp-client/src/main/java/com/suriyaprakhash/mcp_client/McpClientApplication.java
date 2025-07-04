@@ -1,10 +1,12 @@
 package com.suriyaprakhash.mcp_client;
 
 
+//import io.modelcontextprotocol.client.McpSyncClient;
+//import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
+//import org.springframework.ai.tool.ToolCallbackProvider;
+//import org.springframework.beans.factory.annotation.Autowired;
 import io.modelcontextprotocol.client.McpSyncClient;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
-import org.springframework.ai.tool.ToolCallbackProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
