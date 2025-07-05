@@ -2,7 +2,7 @@ package com.suriyaprakhash.inventory_mgnt.orders;
 
 import com.suriyaprakhash.inventory_mgnt.inventory.LowInventoryEvent;
 import com.suriyaprakhash.inventory_mgnt.inventory.MultipleLowInventoryEvent;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.suriyaprakhash.inventory_mgnt.products.ProductService;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +16,11 @@ import java.util.List;
 @Component
 public class LowInventoryEventListener {
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
+
+    public LowInventoryEventListener(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     /**
      * Handle low inventory events by creating an order for the product.
@@ -40,7 +43,6 @@ public class LowInventoryEventListener {
         OrderData orderData = new OrderData(
             null, // ID will be generated
             LocalDate.now(),
-            0.0f, // Total will be calculated later based on product price
             lineItems
         );
 
@@ -66,7 +68,6 @@ public class LowInventoryEventListener {
         OrderData orderData = new OrderData(
                 null, // ID will be generated
                 LocalDate.now(),
-                0.0f, // Total will be calculated later based on product price
                 lineItems
         );
 

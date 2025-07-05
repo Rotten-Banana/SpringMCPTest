@@ -6,7 +6,6 @@ import java.util.List;
 public record OrderData(
     Integer id,
     LocalDate orderDateTime,
-    Float total,
     List<OrderLineItemData> lineItems
 ) {
 }

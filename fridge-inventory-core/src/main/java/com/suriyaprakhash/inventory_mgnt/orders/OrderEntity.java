@@ -19,6 +19,6 @@ public class OrderEntity {
     @Column(name = "order_date_time")
     private LocalDate orderDateTime;
 
-    @Column(name = "total", nullable = false)
-    private Float total;
+//    @Column(name = "total", nullable = false)
+//    private Float total;
 }

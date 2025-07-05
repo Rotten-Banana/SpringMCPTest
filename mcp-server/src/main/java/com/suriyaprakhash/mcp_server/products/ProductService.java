@@ -33,16 +33,17 @@ public class ProductService {
         return productsDataList
 				.stream()
 				.map(productsData -> String.format("""
+					Product Id: %d,
 					Name: %s
 					Type: %s
 					Price: %s
-					""", productsData.name(), productsData.type(), productsData.price()))
+					""", productsData.id(), productsData.name(), productsData.type(), productsData.price()))
 				.collect(Collectors.joining("\n"));
 	}
 
 
 	@Tool(name = "add_product",
-			description = "Adds a new product to the product table. Requires the product's name and a valid price. Optionally, you can include the product's ID and type.")
+			description = "Adds a new product to the product table. Requires the product's name and a valid price. Prompt for confirmation before adding the product")
 //	public String addProduct(ProductsData productsData) { // this is not working (converting json to object) - instead use them as individual vars
 	public String addProduct(String name, ProductType type, float price) {
 		ProductsData productsData = new ProductsData(0, name, type, price);

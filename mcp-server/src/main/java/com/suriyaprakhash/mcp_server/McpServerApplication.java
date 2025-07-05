@@ -1,5 +1,6 @@
 package com.suriyaprakhash.mcp_server;
 
+import com.suriyaprakhash.mcp_server.inventory.InventoryService;
 import com.suriyaprakhash.mcp_server.products.ProductService;
 import org.springframework.ai.support.ToolCallbacks;
 import org.springframework.ai.tool.ToolCallback;
@@ -17,8 +18,8 @@ public class McpServerApplication {
 	}
 
 	@Bean
-	public List<ToolCallback> suriyaTools(ProductService productService) {
-		return List.of(ToolCallbacks.from(productService));
+	public List<ToolCallback> suriyaTools(ProductService productService, InventoryService inventoryService) {
+		return List.of(ToolCallbacks.from(productService, inventoryService));
 	}
 
 }

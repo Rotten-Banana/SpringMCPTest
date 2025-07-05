@@ -36,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
         return new OrderData(
                 entity.getId(),
                 entity.getOrderDateTime(),
-                entity.getTotal(),
+//                entity.getTotal(),
                 lineItemsData
         );
     }
@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
             entity.setOrderDateTime(data.orderDateTime());
         }
         
-        entity.setTotal(data.total());
+//        entity.setTotal(data.total());
         return entity;
     }
 
