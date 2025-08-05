@@ -3,10 +3,6 @@
 - This is a simple fridge order placing system(similation of your production system thats already running) based on Spring Modulith's events, when the inventory goes below the requested consumption quantity sends an event to place an order. 
 - This is to demonstrate the AI chatbot and MCP Spring AI chat using SSE
 
-[![Spring AI MCP Chatbot](https://markdown-videos-api.jorgenkh.no/url?url=https://youtu.be/chBd2Ls_4_Y)](https://youtu.be/chBd2Ls_4_Y)
-
-Find more info about this in [this medium article](https://medium.com/javarevisited/spring-ai-mcp-client-server-with-ollama-for-your-enterprise-application-with-sse-73486cc5341c).
-
 ## Run
 
 Run the application using the application classes in the following order,
